@@ -12,30 +12,27 @@ public class CityJpaDao implements CityDao{
 	this.em = em;
 	}
 	
-	
-	
 	@Override
 	public City createCity(City city) {
-		
 		em.persist(city);
-		return null;
+		return city;
 	}
 
 	@Override
 	public City getCityById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return em.find(City.class, id);
 	}
 
 	@Override
 	public City updateCity(City city) {
-		// TODO Auto-generated method stub
-		return null;
+		//cityResult est en objet managé
+		City cityResult = em.merge(city);
+		return cityResult;
 	}
 
 	@Override
-	public void deleteCityById(Long id) {
-		// TODO Auto-generated method stub
+	public void deleteCityById(Long id) {	
+		em.remove(getCityById(id));
 		
 	}
 

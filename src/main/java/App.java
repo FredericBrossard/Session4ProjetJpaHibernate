@@ -9,6 +9,8 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import co.simplon.jpadao.CityJpaDao;
+import co.simplon.jpadao.MonumentJpaDao;
 import co.simplon.model.City;
 import co.simplon.model.Monument;
 import co.simplon.model.User;
@@ -231,10 +233,46 @@ public class App implements AutoCloseable {
 	
 	public static void main(String[] args) {
 		try (App app = new App()) {
-			System.out.println(app.createCity());
+			
+			EntityManager em = app.factory.createEntityManager();
+			
+			//Création de City
+			CityJpaDao cityJpaDao = new CityJpaDao(em);
+			City cityParis = new City("Paris", 12., 234.6);
+			cityJpaDao.createCity(cityParis);
+			System.out.println("Création de la ville : " + cityParis);
+			
+			//Update de la latitude de l objet "City"
+			cityParis.setLatitude(156.);
+			cityJpaDao.updateCity(cityParis);
+			System.out.println("Latitude mise à jour : " + cityParis);
+			
+			//Selection de la ville selon la clef Id
+			City cityParisCpy = cityJpaDao.getCityById(cityParis.getId());
+			System.out.println("Selection de l'IdKey de la ville : " + cityParisCpy);
+			
+			//Création de Monument
+			MonumentJpaDao monumentJpaDao = new MonumentJpaDao(em);
+			Monument monuTourEffeil = new Monument("Tour Effeil", cityParis);
+			monumentJpaDao.createMonument(monuTourEffeil);
+			
+			//Update du name de l'objet "Monument"
+			monuTourEffeil.setName("Arc Triomphe");
+			monumentJpaDao.updateMonument(monuTourEffeil);
+			
+			//Selection du monument selon l'IdKey
+			Monument monuTourEffeilCpy = monumentJpaDao.getMonumentById(monuTourEffeil.getId());
+			System.out.println("L idKey de Monument est :" + monuTourEffeilCpy);
+			em.close();
+			
+			//Delete monument et ville
+			monumentJpaDao.deleteMonumentById(monuTourEffeil.getId());
+			cityJpaDao.deleteCityById(cityParis.getId());
+			
+			//System.out.println(app.createCity());
 			// System.out.println(app.createCityAndUpdate());
 			// System.out.println(app.readCity());
-			// System.out.println(app.updateCity());
+			//System.out.println(app.updateCity());
 			//app.deleteCity();
 			//System.out.println(app.createCity());
 			//System.out.println(app.createMonument());
@@ -245,7 +283,7 @@ public class App implements AutoCloseable {
 			//app.listFindAllCities();
 			//app.findAllCity(0, 3);
 			//app.findAllMonument(0, 2);
-			app.deletebyIdCity();
+			//app.deletebyIdCity();
 
 		} catch (Exception e) {
 			System.out.println("Exception captutée : " + e);
