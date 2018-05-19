@@ -1,4 +1,5 @@
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,8 +10,14 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+
+
 import co.simplon.jpadao.CityJpaDao;
+import co.simplon.jpadao.CityJpaDaoFactorise;
 import co.simplon.jpadao.MonumentJpaDao;
+import co.simplon.jpadao.MonumentJpaDaoFactorise;
+import co.simplon.jpadao.UserJpaDao;
+import co.simplon.jpadao.UserJpaDaoFactorise;
 import co.simplon.model.City;
 import co.simplon.model.Monument;
 import co.simplon.model.User;
@@ -70,10 +77,10 @@ public class App implements AutoCloseable {
 	// Exo 6-2 Relation N-N
 	public User createUser() {
 		EntityManager em = factory.createEntityManager();
-		User user = new User("Catwoman");
-		City c = create(em, new City("London", 12., 4.));
+		User user = new User("Woderwoman");
+		City c = create(em, new City("Onolulu", 12., 4.));
 		System.out.println("Création de la city :" + c);
-		Monument m = create(em, new Monument("Big Ben", c));
+		Monument m = create(em, new Monument("Bog Ben", c));
 		System.out.println("Creation du monument : " + m);
 		
 		user.addMonument(m);
@@ -84,8 +91,8 @@ public class App implements AutoCloseable {
 		System.err.println("");
 		
 		
-		System.err.println("Appel de delete city");
-		deleteCity(c.getId());
+		System.err.println("Appel de delete city NON Fait");
+		//deleteCity(c.getId());
 		em.close();
 		return user;
 	}
@@ -233,9 +240,12 @@ public class App implements AutoCloseable {
 	
 	public static void main(String[] args) {
 		try (App app = new App()) {
-			
+			//Création qui fonctionne
+		   ///System.out.println(app.createUser());
+		    
 			EntityManager em = app.factory.createEntityManager();
 			
+			/*
 			//Création de City
 			CityJpaDao cityJpaDao = new CityJpaDao(em);
 			City cityParis = new City("Paris", 12., 234.6);
@@ -263,12 +273,44 @@ public class App implements AutoCloseable {
 			//Selection du monument selon l'IdKey
 			Monument monuTourEffeilCpy = monumentJpaDao.getMonumentById(monuTourEffeil.getId());
 			System.out.println("L idKey de Monument est :" + monuTourEffeilCpy);
+			
+			//Création de Monument
+			UserJpaDao userJpaDao = new UserJpaDao(em);
+			User userFred = new User("Fred");
+			userJpaDao.createUser(userFred);
+	
+			//Selection du monument selon l'IdKey
+			User userFredCpy = userJpaDao.getUserById(userFred.getId());
+			System.out.println("L idKey de Monument est :" + monuTourEffeilCpy);
+			
+			//Update du name de l'objet "Usert"
+			userFred.setName("Arc Triomphe");
+			userJpaDao.updateUser(userFred);
+			*/
+			//----------Fonctionnement en mode factorisé--------------------------
+			//Création d'une ville
+			City cityDubai = new City("Dubai",12.,45.43);
+			CityJpaDaoFactorise cityDAO = new CityJpaDaoFactorise(em);
+			cityDAO.create(cityDubai);
+			
+			//Création d'une Monument
+			Monument monuTower = new Monument("Tower", cityDubai);
+			MonumentJpaDaoFactorise monuDAO = new MonumentJpaDaoFactorise(em);
+			monuDAO.create(monuTower);
+			
+			//Création d'un User
+			User userBoby = new User("Boby");
+			UserJpaDaoFactorise userDAO = new UserJpaDaoFactorise(em);
+			userDAO.create(userBoby);
+			
 			em.close();
 			
 			//Delete monument et ville
-			monumentJpaDao.deleteMonumentById(monuTourEffeil.getId());
+			/*monumentJpaDao.deleteMonumentById(monuTourEffeil.getId());
 			cityJpaDao.deleteCityById(cityParis.getId());
+			userJpaDao.deleteUserById(userFred.getId());*/
 			
+		
 			//System.out.println(app.createCity());
 			// System.out.println(app.createCityAndUpdate());
 			// System.out.println(app.readCity());
