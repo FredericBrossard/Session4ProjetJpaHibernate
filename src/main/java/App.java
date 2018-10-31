@@ -244,7 +244,7 @@ public class App implements AutoCloseable {
 		   ///System.out.println(app.createUser());
 		    
 			EntityManager em = app.factory.createEntityManager();
-			
+			em.getTransaction().begin();
 			/*
 			//Création de City
 			CityJpaDao cityJpaDao = new CityJpaDao(em);
@@ -289,27 +289,29 @@ public class App implements AutoCloseable {
 			*/
 			//----------Fonctionnement en mode factorisé--------------------------
 			//Création d'une ville
-			City cityDubai = new City("Dubai",12.,45.43);
+			City cityDubai = new City("Dubaii",12.,45.43);
 			CityJpaDaoFactorise cityDAO = new CityJpaDaoFactorise(em);
+			System.out.println("La class Name :" + cityDAO.getClassName());
 			cityDAO.create(cityDubai);
 			
+			
 			//Création d'une Monument
-			Monument monuTower = new Monument("Tower", cityDubai);
+			Monument monuTower = new Monument("Towerr", cityDubai);
 			MonumentJpaDaoFactorise monuDAO = new MonumentJpaDaoFactorise(em);
 			monuDAO.create(monuTower);
 			
 			//Création d'un User
-			User userBoby = new User("Boby");
+			User userBoby = new User("Bobyr");
 			UserJpaDaoFactorise userDAO = new UserJpaDaoFactorise(em);
 			userDAO.create(userBoby);
 			
+			em.getTransaction().commit();
 			em.close();
 			
 			//Delete monument et ville
 			/*monumentJpaDao.deleteMonumentById(monuTourEffeil.getId());
 			cityJpaDao.deleteCityById(cityParis.getId());
-			userJpaDao.deleteUserById(userFred.getId());*/
-			
+			userJpaDao.deleteUserById(userFred.getId());*/	
 		
 			//System.out.println(app.createCity());
 			// System.out.println(app.createCityAndUpdate());

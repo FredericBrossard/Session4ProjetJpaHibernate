@@ -74,5 +74,9 @@ import javax.persistence.Table;
 		public String toString() {
 			return "User :{ id= "+id+"\n name= "+name+"\n nb momunents"+ monuments.size()+"\n}";
 		}
+
+		public Long getId() {
+			return id;
+		}
 		
 }
